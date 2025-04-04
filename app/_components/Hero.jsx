@@ -1,42 +1,36 @@
-import React from 'react'
-import Image from "next/image";
+import React from "react";
 
 function Hero() {
   return (
-
-
-    <section className="bg-gray-50 flex items-center flex-col">
-      <div className="mx-auto max-w-screen-xl px-4 py-32 lg:flex
-  ">
-        <div className="mx-auto max-w-xl text-center">
-          <h1 className="text-3xl font-extrabold sm:text-5xl">
-            Manage Your Expenses...
-            <strong className="font-extrabold text-primary sm:block"> Control Your Money </strong>
+    <section className="bg-gray-50 flex items-center flex-col text-center">
+      <div className="mx-auto max-w-screen-xl px-4 py-20 sm:py-24">
+        {/* Heading */}
+        <div className="mx-auto max-w-xl">
+          <h1 className="text-4xl sm:text-5xl font-extrabold leading-snug mb-2 text-gray-800">
+            Manage Your Expenses
           </h1>
+          <h2 className="text-4xl sm:text-5xl font-extrabold leading-snug mb-2 text-primary">
+            Control Your Money
+          </h2>
 
-          <p className="mt-4 sm:text-xl/relaxed">
-            Start Creating Your Budget & Save Ton Of Money
+          {/* Subtext */}
+          <p className="mt-2 text-lg sm:text-xl text-gray-600">
+            Start Creating Your Budget & Save Tons of Money 💸💸...
           </p>
 
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
+          {/* CTA Button */}
+          <div className="mt-6 flex flex-wrap justify-center gap-4">
             <a
-              className="block w-full rounded bg-primary px-12 py-3 text-sm font-medium text-white shadow hover:bg-blue-700 focus:outline-none focus:ring active:bg-red-500 sm:w-auto"
+              className="block w-full sm:w-auto rounded bg-primary px-12 py-3 text-lg font-semibold text-white shadow-md hover:bg-blue-700 transition-all duration-300"
               href="/sign-in"
             >
               Get Started
             </a>
-
-
           </div>
         </div>
       </div>
-      <Image src={'/dashboard.png'} alt='dashboard'
-        width={1000}
-        height={700}
-        className='-mt-9 rounded-xl board-2'
-      />
     </section>
-  )
+  );
 }
 
-export default Hero
+export default Hero;

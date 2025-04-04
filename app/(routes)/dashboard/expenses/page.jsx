@@ -6,9 +6,12 @@ import { db } from "@/utils/dbConfig";
 import { desc, eq } from "drizzle-orm";
 import { Budgets, Expenses } from "@/utils/schema";
 import { Trash } from "lucide-react";
+import { toast } from "sonner"; // Import toast for notifications
+import { useRouter } from "next/navigation"; // Import router for navigation
 
 const Dashboard = () => {
   const { user } = useUser();
+  const router = useRouter(); // Use router for navigation
   const [expensesList, setExpensesList] = useState([]);
 
   useEffect(() => {
@@ -38,8 +41,20 @@ const Dashboard = () => {
   };
 
   const deleteExpense = async (id) => {
-    // Implement delete logic
-    console.log("Delete expense with ID:", id);
+    try {
+      const result = await db
+        .delete(Expenses)
+        .where(eq(Expenses.id, id))
+        .returning();
+
+      if (result.length > 0) {
+        toast.success("Expense Deleted!"); // Show success message
+        getAllExpenses(); // Refresh the list
+      }
+    } catch (error) {
+      console.error("Error deleting expense:", error);
+      toast.error("Failed to delete expense!"); // Show error message
+    }
   };
 
   return (
@@ -65,7 +80,7 @@ const Dashboard = () => {
               <tr key={expense.id} className="border-b">
                 <td className="p-4">{expense.name}</td>
                 <td className="p-4">₹{expense.amount}</td>
-                <td className="p-4">{expense.createdAt}</td>
+                <td className="p-4">{new Date(expense.createdAt).toLocaleDateString()}</td>
                 <td className="p-4 text-center">
                   <button
                     onClick={() => deleteExpense(expense.id)}

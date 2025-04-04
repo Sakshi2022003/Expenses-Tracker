@@ -15,7 +15,7 @@ const BarChartDashboard = dynamic(() => import("./_components/BarChartDashboard"
 
 const Dashboard = () => {
   const { user } = useUser();
-  const [budgetList, setBudgetList] = useState([]);
+  const [budgetList, setBudgetList] = useState([]); // ✅ Ensuring empty arrays for state initialization
   const [expensesList, setExpensesList] = useState([]);
 
   useEffect(() => {
@@ -42,7 +42,7 @@ const Dashboard = () => {
         .groupBy(Budgets.id)
         .orderBy(desc(Budgets.id));
 
-      setBudgetList(result);
+      setBudgetList(result || []); // ✅ Ensuring result is always an array
     } catch (error) {
       console.error("Error fetching budget list:", error);
     }
@@ -65,9 +65,25 @@ const Dashboard = () => {
         .where(eq(Budgets.createdBy, user?.primaryEmailAddress?.emailAddress))
         .orderBy(desc(Expenses.id));
 
-      setExpensesList(result);
+      setExpensesList(result || []); // ✅ Ensuring result is always an array
     } catch (error) {
       console.error("Error fetching expenses:", error);
+    }
+  };
+
+  /**
+   * Delete an expense and refresh the list
+   */
+  const deleteExpense = async (id) => {
+    try {
+      const result = await db.delete(Expenses).where(eq(Expenses.id, id)).returning();
+
+      if (result.length > 0) {
+        setExpensesList((prev) => prev.filter((expense) => expense.id !== id)); // ✅ Remove deleted item from UI
+        getBudgetList(); // ✅ Refresh budgets
+      }
+    } catch (error) {
+      console.error("Error deleting expense:", error);
     }
   };
 
@@ -85,7 +101,11 @@ const Dashboard = () => {
           <BarChartDashboard budgetList={budgetList} />
           <ExpenseListTable
             expensesList={expensesList}
-            refreshData={() => getBudgetList()}
+            refreshData={() => {
+              getBudgetList();
+              getAllExpenses(); // ✅ Refresh expenses after deletion
+            }}
+            onDeleteExpense={deleteExpense} // ✅ Pass delete function to ExpenseListTable
           />
         </div>
         <div className="grid gap-5">
